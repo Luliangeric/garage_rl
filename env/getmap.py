@@ -1,4 +1,4 @@
-import csv
+import json
 import numpy as np
 
 EXPAND = [(0, -1), (1, 0), (0, 1), (-1, 0)]
@@ -12,7 +12,7 @@ class MapDate:
         self.width = 0
         self.init_map()
 
-    def init_map(self, map_file="map1.txt"):
+    def init_map(self, map_file="../data/map1.txt"):
 
         with open(map_file, 'r') as map_:
             while 1:
@@ -38,9 +38,12 @@ class MapDate:
                     parking.append((j, i))
 
         for pos in parking:
-            res.append(len(self.astar(imports, pos)) + len(self.astar(pos, exits)))
-        res.sort()
-        return tuple(res)
+            res.append((len(self.astar(imports, pos)) + len(self.astar(pos, exits)), tuple(pos)))
+        res.sort(key=lambda x: x[0])
+        Map = dict()
+        for i, item in enumerate(res):
+            Map[i] = res[i]
+        return Map
 
     def astar(self, spos, gpos):
 
@@ -100,9 +103,8 @@ class MapDate:
 
 
 if __name__ == '__main__':
-    with open("garage.csv", 'w', newline='') as garage:
+    with open("../data/garage.json", 'w', newline='') as garage:
         temp = MapDate()
         data = temp.get_parking_dis()
-        writer = csv.writer(garage)
-        writer.writerow(data)
+        json.dump(data, garage)
         print('parking number:', len(data))

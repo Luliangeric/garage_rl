@@ -1,9 +1,5 @@
 import numpy as np
 
+temp = hex(255)
 
-a = np.array([1,1,1,2])
-
-b = a.reshape(1, 4)
-
-print(a)
-print(b)
+print(temp[2:].upper())

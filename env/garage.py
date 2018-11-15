@@ -1,15 +1,15 @@
 from env.carlist import CarList
 import matplotlib.pyplot as plt
-import csv
+import json
 
 
 class Garage:
-    def __init__(self):
-        with open("garage.csv", 'r') as garage:
-            reader = csv.reader(garage)
-            self.parking_dis = [int(x) for x in next(reader)]
+    def __init__(self, filename):
+        with open(filename, 'r') as garage:
+            data = json.load(garage)
+            self.parking_dis = [x[0] for x in data.values()]
         self.parking_number = len(self.parking_dis)
-        self.state = [0. for _ in range(self.parking_number)]
+        self.state = [0 for _ in range(self.parking_number)]
 
         self.norm_t = None
         self.norm_mass = None
@@ -43,7 +43,7 @@ class Garage:
         return reward, self.car_list.done
 
     def reset(self):
-        t_range, wt_range, m_range, max_num = [1000, 7000], [10, 20], [5, 10], 200
+        t_range, wt_range, m_range, max_num = [1000, 7000], [10, 20], [5, 10], 100
         self.norm_t, self.norm_mass = 1 / t_range[1], 1 / m_range[1]
         self.baseline = (m_range[0] + m_range[1]) * (self.parking_dis[0] + self.parking_dis[-1]) / \
                         self.parking_dis[-1] / 4 * self.norm_mass
@@ -54,7 +54,7 @@ class Garage:
 
 
 if __name__ == '__main__':
-    temp = Garage()
+    temp = Garage("../data/garage.json")
     temp.reset()
     num = list()
     time = list()

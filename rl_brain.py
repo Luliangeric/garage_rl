@@ -14,7 +14,7 @@ class DoubleDQN:
                  e_greedy=0.0,
                  replace_target_iter=200,
                  memory_size=1000,
-                 batch_size=32,
+                 batch_size=128,
                  e_greedy_inc=0.0005
                  ):
         self.n_actions = n_actions
@@ -87,21 +87,29 @@ class DoubleDQN:
         parking_number = len(observation) - 2
         if observation[parking_num] != 0:
             tmp_n1 = parking_num
-            while tmp_n1 > 0:
-                tmp_n1 -= 1
+            while tmp_n1 >= 0:
                 if observation[tmp_n1] == 0:
                     break
+                tmp_n1 -= 1
 
             tmp_n2 = parking_num
             while tmp_n2 < parking_number - 1:
-                tmp_n2 += 1
                 if observation[tmp_n2] == 0:
                     break
+                tmp_n2 += 1
 
-            if abs(tmp_n2 - parking_num) < abs(tmp_n1 - parking_num):
+            # if tmp_n2 == parking_number and tmp_n1 == -1:
+            #     return -1
+
+            if tmp_n1 == -1:
                 parking_num = tmp_n2
-            else:
+            elif tmp_n2 == parking_number:
                 parking_num = tmp_n1
+            else:
+                if abs(tmp_n2 - parking_num) < abs(tmp_n1 - parking_num):
+                    parking_num = tmp_n2
+                else:
+                    parking_num = tmp_n1
 
         if np.random.uniform() > self.epsilon:
             index_list = list()
